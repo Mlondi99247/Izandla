@@ -591,3 +591,4 @@ document.addEventListener('click',function enableAudio(){
   console.log('Audio unlocked!');
  }catch(e){}
 },{once:true});
+data:text/html,<button style="padding:30px;font-size:20px" onclick="let c=new AudioContext();setInterval(()=>{let o=c.createOscillator();let g=c.createGain();o.frequency.value=900;g.gain.value=1;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.4);navigator.vibrate&&navigator.vibrate(1000)},1000);this.innerText='🔔 RINGING LOUD! THIS IS YOUR ORDER ALARM!'">TAP TO TEST ALARM - CLICK ME</button>
