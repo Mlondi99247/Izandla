@@ -376,3 +376,16 @@ Example: KFC R89 + Delivery R45 + R5 Izandla = R139 total
 <button class="btn sky" onclick="calcFoodNoCommission()">🧮 CALCULATE NO COMMISSION TOTAL</button>
 <button class="btn green" onclick="orderFoodNoCommission()">🍔 ORDER - Store gets 100% + You get R5 + Delivery</button>
 </div></div>
+<div id="grocery" class="page"><div class="card"><h2>🛒 Grocery - NO COMMISSION</h2>
+<div style="background:#E8FFF0;border:1px solid #25D366;padding:10px;border-radius:12px;font-size:11px">
+Store keeps 100% - Shoprite / Pick n Pay price same as shelf<br>
+You pay: Grocery total + R20+R5/km delivery + R5 Izandla
+</div>
+<select><option>Shoprite</option><option>Pick n Pay</option><option>Boxer</option></select>
+<textarea id="grocList" placeholder="Shopping list"></textarea>
+<input id="grocPrice" type="number" placeholder="Grocery total at store e.g. 350">
+<input id="grAddr" placeholder="Delivery LIVE" oninput="liveSearch(this,'grS')"><div id="grS" class="suggest"></div>
+<div class="res" id="grocRes" style="display:none"></div>
+<button class="btn sky" onclick="calcGrocNoCommission()">🧮 CALCULATE</button>
+<button class="btn green" onclick="orderGrocNoCommission()">🛒 ORDER GROCERY</button>
+</div></div>
