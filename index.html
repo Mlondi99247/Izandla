@@ -216,3 +216,52 @@ function wa(){if(!FARE){alert('Calculate first');return;}let m=`Hi Izandla Raag 
 </script>
 </body>
 </html>
+<div id="plumber" class="page">
+<div class="card"><h2>🔧 Plumbing - Complete</h2>
+<div class="grid">
+<div class="svc" style="border:1.5px solid #0072FF"><div style="font-size:26px">💧</div><b>Leak Repair</b><span class="price">R250 callout</span></div>
+<div class="svc"><div style="font-size:26px">💥</div><b>Burst Pipe</b><span class="price">Emergency 24h</span></div>
+<div class="svc"><div style="font-size:26px">🚽</div><b>Toilet / Tap</b><span class="price">R180 - R450</span></div>
+<div class="svc"><div style="font-size:26px">🚿</div><b>Drain Unblock</b><span class="price">R350</span></div>
+</div>
+<select id="plumbIssue"><option>Leaking tap / pipe</option><option>Burst pipe - Emergency</option><option>Blocked drain / toilet</option><option>Toilet not flushing</option><option>Low water pressure</option><option>Pipe installation new house</option></select>
+<input type="file" accept="image/*" id="plumbPic"><small style="font-size:10px;color:#666">📸 Upload photo of leak - we quote faster</small>
+<input id="pAddr" placeholder="Your address LIVE - type for map" oninput="liveSearch(this,'pS')"><div id="pS" class="suggest"></div>
+<button class="btn sky" onclick="bookPlumb()">🔧 BOOK PLUMBER - R250 callout</button>
+</div>
+
+<div class="card" style="border:2px solid #FF6B00"><h2>🔥 Geyser Installation & Service - COMPLETE</h2>
+<p style="font-size:11px;background:#FFF6E8;padding:8px;border-radius:10px">✅ Kwikot / Franke / Gas geysers • SANS approved • Certificate provided • Capitec home loan compliant</p>
+<div class="grid">
+<div class="svc"><b>50L - 100L</b><span class="price">R4,500 install</span><small>1-2 people</small></div>
+<div class="svc" style="background:#E6F0FF"><b>150L Popular</b><span class="price">R6,200 install</span><small>3-4 people</small></div>
+<div class="svc"><b>200L</b><span class="price">R7,800 install</span><small>4-5 people</small></div>
+<div class="svc"><b>300L Solar</b><span class="price">R18,000</span><small>Save electricity</small></div>
+</div>
+<select id="geyserSize"><option>50L Electric - Small flat</option><option>100L Electric - 2 people</option><option>150L Electric - 3-4 people POPULAR</option><option>200L Electric - Family</option><option>150L Gas Geyser - Instant hot</option><option>200L Solar Geyser - Save R800/month</option><option>300L Solar with backup</option></select>
+<select id="geyserAction"><option>New Installation</option><option>Replace Old Geyser</option><option>Repair - Not heating</option><option>Repair - Leaking / Burst</option><option>Service & Anode check</option><option>Move geyser location</option></select>
+<select><option>Kwikot (5yr warranty)</option><option>Franke</option><option>Heat Tech</option><option>Gas - Rinnai / Bosch</option><option>Solar - Kwikot Solar</option></select>
+<input type="file" accept="image/*"><small style="font-size:10px">📸 Old geyser photo for quote</small>
+<input id="gAddr2" placeholder="Installation address LIVE" oninput="liveSearch(this,'gS2')"><div id="gS2" class="suggest"></div>
+<button class="btn orange" onclick="bookGeyser()">🔥 BOOK GEYSER INSTALL - Quote + Certificate</button>
+<div style="font-size:10px;color:#666;margin-top:8px;line-height:1.4">Includes: Geyser, installation, copper pipes, pressure valve, drip tray, 5yr warranty, COC certificate for insurance & Capitec home loan. Gas geyser = instant hot, no electricity. Solar = 70% saving.</div>
+</div>
+
+<div class="card" style="border:2px solid #0072FF"><h2>❄️ Aircon - Service / Install / Repair - COMPLETE</h2>
+<div class="grid">
+<div class="svc"><b>Service Clean</b><span class="price">R450</span><small>Anti-bacteria</small></div>
+<div class="svc" style="background:#E6F0FF"><b>Regas</b><span class="price">R650</span><small>9000-12000 BTU</small></div>
+<div class="svc"><b>Install New</b><span class="price">R1,800 + unit</span></div>
+<div class="svc"><b>Repair</b><span class="price">R350 diag</span></div>
+</div>
+<select id="airBtu"><option>9000 BTU - Small bedroom 12m²</option><option>12000 BTU - Bedroom / Office 18m² POPULAR</option><option>18000 BTU - Lounge 30m²</option><option>24000 BTU - Open plan 40m²</option><option>30000 BTU - Shop / Capitec branch</option></select>
+<select id="airAction"><option>Service & Deep Clean - Every 6 months</option><option>Regas - Not cooling</option><option>New Installation - Supply + Install</option><option>Repair - Leaking water / Ice / Noise</option><option>De-install & Move</option><option>Commercial - Capitec / Shop</option></select>
+<select><option>Samsung</option><option>LG</option><option>Defy / Alliance</option><option>Jet-Air</option><option>Daikin - Premium</option></select>
+<input type="file" accept="image/*"><small style="font-size:10px">📸 Upload aircon photo / error code</small>
+<input id="aAddr" placeholder="Aircon address LIVE" oninput="liveSearch(this,'aS')"><div id="aS" class="suggest"></div>
+<button class="btn sky" onclick="bookAir()">❄️ BOOK AIRCON SERVICE - R450</button>
+<div style="font-size:10px;color:#666;margin-top:8px;line-height:1.4">Service includes: Chemical clean indoor/outdoor, filter wash, gas pressure check, drain flush, 30-day warranty. Install includes bracket, copper pipe 3m, vacuum, commission. We service Capitec branches too.</div>
+</div>
+
+<div class="card" style="background:#0A1931;color:#fff;text-align:center"><h3>🚨 Emergency Plumber 24h</h3><p style="font-size:12px;margin:6px 0">Burst geyser / pipe at 2AM? We come!</p><button class="btn green" onclick="window.open('https://wa.me/27795100296?text=EMERGENCY PLUMBER BURST! My address: ')">💬 WHATSAPP EMERGENCY - 079 5100 296</button></div>
+</div>
