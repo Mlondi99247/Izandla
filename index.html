@@ -542,3 +542,41 @@ function toggleStore(){}
 function doSignup(){let r=document.getElementById('role')?.value||'driver';alert(r+' account created - alarm enabled!');if(r=='driver')showPage('driverDash');else if(r=='cleaner')showPage('cleanerDash');else showPage('home');}
 document.addEventListener('click',function enableAudio(){let a=document.getElementById('alarmSound');a.volume=0.1;a.play().then(()=>{a.pause();a.volume=1;}).catch(()=>{});document.removeEventListener('click',enableAudio);},{once:true});
 </script></body></html>
+let audioCtx=null, osc1=null, osc2=null;
+function startAlarmSound(){
+ try{
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  stopAlarmSound();
+  // Create loud beeping
+  function beep(){
+   if(!audioCtx) return;
+   let o = audioCtx.createOscillator();
+   let g = audioCtx.createGain();
+   o.type='square'; o.frequency.value=900;
+   g.gain.value=0.8;
+   o.connect(g); g.connect(audioCtx.destination);
+   o.start(); o.stop(audioCtx.currentTime+0.4);
+   setTimeout(()=>{
+    let o2 = audioCtx.createOscillator();
+    let g2 = audioCtx.createGain();
+    o2.type='square'; o2.frequency.value=1200;
+    g2.gain.value=0.8;
+    o2.connect(g2); g2.connect(audioCtx.destination);
+    o2.start(); o2.stop(audioCtx.currentTime+0.4);
+   },500);
+  }
+  beep();
+  if(alarmInterval) clearInterval(alarmInterval);
+  alarmInterval = setInterval(beep, 1200);
+  if(navigator.vibrate) navigator.vibrate([1000,300,1000,300,1000,500,1000]);
+  // Also try old MP3 as backup
+  let a=document.getElementById('alarmSound');
+  a.volume=1.0; a.play().catch(()=>{});
+ }catch(e){console.log('Audio error',e); alert('🔔🔔 NEW ORDER! (Sound blocked, enable sound in browser settings)');}
+}
+function stopAlarmSound(){
+ if(alarmInterval) clearInterval(alarmInterval);
+ try{let a=document.getElementById('alarmSound'); a.pause(); a.currentTime=0;}catch(e){}
+ if(navigator.vibrate) navigator.vibrate(0);
+}
