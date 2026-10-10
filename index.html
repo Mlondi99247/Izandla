@@ -361,3 +361,18 @@ document.getElementById('role').addEventListener('change',function(){if(this.val
 // For cleaning button - set type
 let origBookClean = window.bookClean || function(){};
 window.bookClean = function(){ CURRENT_TYPE='CLEANING'; calcHome(); setTimeout(()=>{waHome();},800); }
+<div id="food" class="page"><div class="card"><h2>🍔 Food Delivery - NO COMMISSION MODEL</h2>
+<div style="background:#E8FFF0;border:1px solid #25D366;padding:10px;border-radius:12px;font-size:11px;line-height:1.5">
+<b>✅ FAIR MODEL: No Commission to Store!</b><br>
+Store keeps 100% menu price<br>
+Customer pays: Menu Price (to store) + Delivery (R20+R5/km) + R5 Izandla fee<br>
+Example: KFC R89 + Delivery R45 + R5 Izandla = R139 total
+</div>
+<select id="foodStore"><option>KFC Margate</option><option>Hungry Lion Port Shepstone</option><option>Chicken Licken</option><option>Local Restaurant - keeps 100%</option></select>
+<textarea id="foodOrder" placeholder="What food? e.g. 2x Streetwise 2 - R89 each"></textarea>
+<input id="foodStorePrice" type="number" placeholder="Store menu total - e.g. 178 (store keeps this 100%)">
+<input id="fAddr" placeholder="Delivery address LIVE" oninput="liveSearch(this,'fS')"><div id="fS" class="suggest"></div>
+<div class="res" id="foodRes" style="display:none"></div>
+<button class="btn sky" onclick="calcFoodNoCommission()">🧮 CALCULATE NO COMMISSION TOTAL</button>
+<button class="btn green" onclick="orderFoodNoCommission()">🍔 ORDER - Store gets 100% + You get R5 + Delivery</button>
+</div></div>
