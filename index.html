@@ -283,3 +283,81 @@ function bookAir(){let b=document.getElementById('airBtu').value;let ac=document
 
 <audio id="bell" src="https://cdn.pixabay.com/audio/2022/03/10/audio_c8c8a650f6.mp3" preload="auto"></audio>
 <style>@keyframes blink{0%{opacity:1}50%{opacity:.3}100%{opacity:1}}</style>
+let DRIVER_ACCEPTED=false,CLEANER_ACCEPTED=false,CURRENT_TYPE='';
+
+// NEW FARE FORMULA - R20 base + R5 per km (you requested)
+function calculateFare(km){return Math.round(20 + km*5);}
+
+async function calcHome(){
+ if(!fromPos||!toPos){alert('Search & select LIVE locations first');return;}
+ let url=`https://router.project-osrm.org/route/v1/driving/${fromPos[1]},${fromPos[0]};${toPos[1]},${toPos[0]}?overview=full&geometries=geojson`;
+ try{let r=await fetch(url);let j=await r.json();let km=j.routes[0].distance/1000;DIST=km;FARE=calculateFare(km); if(line)map.removeLayer(line); line=L.geoJSON(j.routes[0].geometry,{style:{color:'#FF6B00',weight:6}}).addTo(map); document.getElementById('hRes').style.display='block';document.getElementById('hRt').innerText=FROM.split(',')[0]+' → '+TO.split(',')[0];document.getElementById('hPr').innerText='R'+FARE;document.getElementById('hKm').innerText=km.toFixed(1)+' km • R20 + R5/km (NEW)';document.getElementById('rPay').innerText=FARE;}catch(e){let R=6371,dLat=(toPos[0]-fromPos[0])*Math.PI/180,dLon=(toPos[1]-fromPos[1])*Math.PI/180;let a=Math.sin(dLat/2)**2+Math.cos(fromPos[0]*Math.PI/180)*Math.cos(toPos[0]*Math.PI/180)*Math.sin(dLon/2)**2;let km=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))*1.35;DIST=km;FARE=calculateFare(km);document.getElementById('hRes').style.display='block';document.getElementById('hRt').innerText=FROM.split(',')[0]+' → '+TO.split(',')[0];document.getElementById('hPr').innerText='R'+FARE;document.getElementById('hKm').innerText=km.toFixed(1)+' km estimated • R20+R5/km';document.getElementById('rPay').innerText=FARE;}
+}
+
+function waHome(){
+ // This is CUSTOMER REQUEST FLOW
+ let type = CURRENT_TYPE || 'RIDE';
+ if(!FARE){alert('Calculate first');return;}
+ // TRIGGER ALARMS BASED ON TYPE
+ if(type==='CLEANING'){
+   triggerDualAlarm(); // Both driver + cleaner
+ } else {
+   triggerDriverOnlyAlarm(); // Ride = driver only
+ }
+ let m=`${type} REQUEST:\nFrom:${FROM}\nTo:${TO}\n${DIST.toFixed(1)}km R${FARE}\nBase R20+R5/km`;
+ window.open('https://wa.me/27795100296?text='+encodeURIComponent(m));
+}
+
+function triggerDriverOnlyAlarm(){
+ // LOUD BELL + DETAILS
+ document.getElementById('bell').play(); navigator.vibrate&&navigator.vibrate([600,200,600,1000]);
+ document.getElementById('driverAlarm').style.display='block';
+ document.getElementById('driverAlarmDetails').innerHTML=`<b>🚕 RIDE REQUEST</b><br>Pickup: ${FROM}<br>Drop: ${TO}<br>Distance: ${DIST.toFixed(1)}km<br>Fare: R${FARE} (R20+R5/km)<br>Customer: ${document.getElementById('suName')?.value||'Customer'}<br>Phone: ${document.getElementById('suPhone')?.value||'Via WhatsApp'}<br><small>Accept or Reject - alarm ringing!</small>`;
+ // Hide cleaner alarm
+ document.getElementById('cleanerAlarm').style.display='none';
+ alert('🔔 Driver Dashboard: NEW RIDE ALARM! Check Driver Dashboard page');
+}
+
+function triggerDualAlarm(){
+ // BOTH DRIVER AND CLEANER GET ALARM SIMULTANEOUSLY FOR CLEANING
+ document.getElementById('bell').play(); navigator.vibrate&&navigator.vibrate([600,200,600,1000]);
+ let details=`<b>🧹 CLEANING + TRANSPORT REQUEST</b><br>Cleaning at: ${TO||FROM}<br>Pickup for cleaner: ${FROM}<br>Distance: ${DIST.toFixed(1)}km<br>Fare: R${FARE} (R20+R5/km) + Cleaning fee<br>Hours: ${document.getElementById('cHours')?.value||'4h'}<br>House: Cleaning Service<br><small>BOTH driver & cleaner must accept!</small>`;
+ document.getElementById('driverAlarm').style.display='block'; document.getElementById('driverAlarmDetails').innerHTML=details;
+ document.getElementById('cleanerAlarm').style.display='block'; document.getElementById('cleanerAlarmDetails').innerHTML=details;
+ alert('🔔🔔 DUAL ALARM! Both Driver AND Cleaner dashboards ringing simultaneously!');
+ DRIVER_ACCEPTED=false; CLEANER_ACCEPTED=false;
+}
+
+function driverAccept(){DRIVER_ACCEPTED=true; document.getElementById('driverAlarm').style.display='none'; checkBothAccepted();}
+function cleanerAccept(){CLEANER_ACCEPTED=true; document.getElementById('cleanerAlarm').style.display='none'; checkBothAccepted();}
+function driverReject(){alert('Driver rejected - customer notified'); document.getElementById('driverAlarm').style.display='none';}
+function cleanerReject(){alert('Cleaner rejected - customer notified'); document.getElementById('cleanerAlarm').style.display='none';}
+function checkBothAccepted(){
+ if(CURRENT_TYPE==='CLEANING'){
+   if(DRIVER_ACCEPTED&&CLEANER_ACCEPTED){alert('✅ BOTH Accepted! Status: Service Coming Your Way - Driver + Cleaner on way!'); document.getElementById('hRt').innerText='✅ SERVICE COMING YOUR WAY - Driver & Cleaner accepted!';}
+   else if(DRIVER_ACCEPTED){alert('Driver accepted, waiting for cleaner...');}
+   else if(CLEANER_ACCEPTED){alert('Cleaner accepted, waiting for driver...');}
+ } else {
+   alert('✅ Driver Accepted! Status: Driver Coming Your Way - RIDE');
+   document.getElementById('hRt').innerText='✅ DRIVER COMING - Accept with exact details!';
+ }
+}
+
+function doSignup(){
+ let r=document.getElementById('role').value;
+ if(r==='store'){document.getElementById('storeFields').style.display='block'; alert('Store fields opened - fill menu copy by copy!'); return;}
+ let name=document.getElementById('suName').value; if(!name){alert('Enter name');return;}
+ if(r==='driver'){show('driverDash'); alert('Driver account created! Base R20+R5/km. You will get RIDE alarm only, CLEANING dual alarm with cleaner');}
+ else if(r==='cleaner'){show('cleanerDash'); alert('Cleaner account created! You get CLEANING dual alarm with driver');}
+ else if(r==='doctor'){show('driverDash'); alert('Doctor Driver account - home visits');}
+ else if(r==='admin'){show('adminDash'); alert('Admin Centre - you see all requests');}
+}
+
+// Update nav to include new pages
+document.querySelector('nav').innerHTML+=`<button onclick="show('signup')">📝 Sign Up</button><button onclick="show('driverDash')">🚕 Driver</button><button onclick="show('cleanerDash')">🧹 Cleaner</button><button onclick="show('adminDash')">👑 Admin</button>`;
+
+document.getElementById('role').addEventListener('change',function(){if(this.value==='store')document.getElementById('storeFields').style.display='block'; else document.getElementById('storeFields').style.display='none';});
+
+// For cleaning button - set type
+let origBookClean = window.bookClean || function(){};
+window.bookClean = function(){ CURRENT_TYPE='CLEANING'; calcHome(); setTimeout(()=>{waHome();},800); }
