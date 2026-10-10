@@ -389,3 +389,73 @@ You pay: Grocery total + R20+R5/km delivery + R5 Izandla
 <button class="btn sky" onclick="calcGrocNoCommission()">🧮 CALCULATE</button>
 <button class="btn green" onclick="orderGrocNoCommission()">🛒 ORDER GROCERY</button>
 </div></div>
+let FOOD_TOTAL=0, GROC_TOTAL=0;
+
+function calcFoodNoCommission(){
+ if(!fromPos||!toPos){alert('Select delivery address via LIVE search to get delivery km'); return;}
+ let storePrice = parseFloat(document.getElementById('foodStorePrice').value)||0;
+ if(!storePrice){alert('Enter store menu total e.g. 178'); return;}
+ // Delivery = R20+R5/km
+ let delivery = calculateFare(DIST);
+ let izandlaFee = 5; // Your R5
+ FOOD_TOTAL = storePrice + delivery + izandlaFee;
+ let res = document.getElementById('foodRes');
+ res.style.display='block';
+ res.innerHTML=`<div style="text-align:left;font-size:12px">
+ <b>NO COMMISSION BREAKDOWN:</b><br>
+ 🍔 Store menu (100% to store): R${storePrice}<br>
+ 🚕 Delivery (${DIST.toFixed(1)}km R20+R5/km): R${delivery}<br>
+ 💙 Izandla fee (your profit): R${izandlaFee}<br>
+ <hr style="margin:6px 0">
+ <b style="font-size:16px">TOTAL CUSTOMER PAYS: R${FOOD_TOTAL}</b><br>
+ <small>Store gets R${storePrice} full, You get R${delivery+izandlaFee} (delivery+R5)</small>
+ </div>`;
+}
+
+function orderFoodNoCommission(){
+ if(!FOOD_TOTAL){calcFoodNoCommission(); return;}
+ let store = document.getElementById('foodStore').value;
+ let order = document.getElementById('foodOrder').value;
+ let storePrice = document.getElementById('foodStorePrice').value;
+ let delivery = calculateFare(DIST);
+ let m=`FOOD ORDER - NO COMMISSION MODEL:\nStore: ${store} - KEEPS 100% R${storePrice}\nOrder: ${order}\nDelivery: ${DIST.toFixed(1)}km R${delivery} (R20+R5/km)\nIzandla R5 fee\nTOTAL R${FOOD_TOTAL}\nFrom: ${FROM}\nTo: ${TO}\nAddress: ${document.getElementById('fAddr').value}`;
+ window.open('https://wa.me/27795100296?text='+encodeURIComponent(m));
+ // Also notify store dashboard if exists
+ triggerDriverOnlyAlarm(); // Driver delivers food
+ alert(`✅ ORDERED! Store ${store} gets R${storePrice} FULL (no commission). You get R${delivery} delivery + R5 Izandla = R${delivery+5}`);
+}
+
+function calcGrocNoCommission(){
+ if(!fromPos||!toPos){alert('Select address LIVE for delivery km'); return;}
+ let grocPrice = parseFloat(document.getElementById('grocPrice').value)||0;
+ let delivery = calculateFare(DIST);
+ let izandlaFee = 5;
+ GROC_TOTAL = grocPrice + delivery + izandlaFee;
+ let res = document.getElementById('grocRes');
+ res.style.display='block';
+ res.innerHTML=`<div style="text-align:left;font-size:12px">
+ 🛒 Grocery (100% to store): R${grocPrice}<br>
+ 🚕 Delivery R20+R5/km: R${delivery}<br>
+ 💙 Izandla: R${izandlaFee}<br>
+ <b>TOTAL R${GROC_TOTAL}</b><br>
+ <small>Store keeps R${grocPrice}</small></div>`;
+}
+
+function orderGrocNoCommission(){
+ if(!GROC_TOTAL)calcGrocNoCommission();
+ let m=`GROCERY NO COMMISSION:\nList: ${document.getElementById('grocList').value}\nStore total R${document.getElementById('grocPrice').value} (100% to store)\nDelivery R${calculateFare(DIST)} + R5 Izandla\nTOTAL R${GROC_TOTAL}\nDelivery to ${document.getElementById('grAddr').value}`;
+ window.open('https://wa.me/27795100296?text='+encodeURIComponent(m));
+ triggerDriverOnlyAlarm();
+}
+
+// Update store signup to show NO COMMISSION promise
+let oldStoreFields = document.getElementById('storeFields');
+if(oldStoreFields){
+ oldStoreFields.innerHTML = `<h4>🏪 Store / Restaurant - NO COMMISSION JOIN</h4>
+ <div style="background:#E8FFF0;padding:8px;border-radius:10px;font-size:11px;margin-bottom:8px">
+ <b>🎉 PROMISE: You keep 100% menu price!</b><br>
+ We only add R20+R5/km delivery + R5 Izandla fee on top<br>
+ Customer pays delivery, you get full food price<br>
+ Example: You sell R100, you get R100, we get R5+R delivery from customer
+ </div>` + oldStoreFields.innerHTML;
+}
