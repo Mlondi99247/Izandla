@@ -1,2 +1,118 @@
 
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Izandla Raag 2 - Book Your Ride</title><script src="https://js.paystack.co/v1/inline.js"></script><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial;background:#f5f7fb}header{background:#1a237e;color:#fff;padding:20px;text-align:center}header h1{font-size:32px}header p{opacity:.9;margin-top:6px;font-size:14px}.wrap{max-width:600px;margin:auto;padding:12px}.hero{background:#fff;border-radius:20px;padding:20px;margin:14px 0;box-shadow:0 6px 20px rgba(0,0,0,.08);text-align:center}.steps{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:14px 0}.step{background:#eef2ff;border-radius:14px;padding:12px;text-align:center}.step b{display:block;font-size:20px}.card{background:#fff;border-radius:20px;padding:20px;box-shadow:0 6px 20px rgba(0,0,0,.08)}select{width:100%;padding:13px;border:1.5px solid #ddd;border-radius:12px;margin:8px 0;font-size:15px}.result{background:#1a237e;color:#fff;border-radius:14px;padding:14px;margin:12px 0;text-align:center;display:none}.btn{width:100%;padding:15px;border:0;border-radius:12px;font-weight:bold;color:#fff;margin-top:10px;font-size:16px}.b1{background:#1a237e}.b2{background:#000}.b3{background:#25D366}.sec{background:#fff;border-radius:20px;padding:18px;margin:14px 0}.sec h2{color:#1a237e;margin-bottom:8px}</style></head><body><header><h1>Izandla Raag 2</h1><p>Trusted Transport • Hibiscus Coast • KZN to Eastern Cape</p><p>⭐ 4.9 Rating • Safe • Affordable • Daily Trips</p></header><div class="wrap"><div class="hero"><h2>Welcome! Sawubona! 👋</h2><p style="margin-top:8px;color:#555;font-size:14px">Book your taxi from Port Shepstone to Margate, Port Edward, Bizana, Lusikisiki & Durban. Auto distance calculates fair price instantly.</p><div class="steps"><div class="step"><b>1</b><small>Select Towns</small></div><div class="step"><b>2</b><small>Auto Distance</small></div><div class="step"><b>3</b><small>Pay & Go</small></div></div></div><div class="card"><h3 style="text-align:center">📍 Book Your Ride Now</h3><select id="f"><option value="">Pickup - Where are you?</option><option value="-30.7414,30.4525,Port Shepstone">📍 Port Shepstone</option><option value="-30.8565,30.3719,Margate">📍 Margate</option><option value="-30.8748,30.3808,Ramsgate">📍 Ramsgate</option><option value="-30.9696,30.2668,Southbroom">📍 Southbroom</option><option value="-31.0497,30.2197,Port Edward">📍 Port Edward</option><option value="-30.9875,29.9236,Bizana">📍 Bizana / Mbizana</option><option value="-31.3678,29.5749,Lusikisiki">📍 Lusikisiki</option><option value="-30.2718,30.7438,Durban">📍 Durban</option></select><select id="t"><option value="">Drop - Where to?</option><option value="-30.7414,30.4525,Port Shepstone">🏁 Port Shepstone</option><option value="-30.8565,30.3719,Margate">🏁 Margate</option><option value="-30.8748,30.3808,Ramsgate">🏁 Ramsgate</option><option value="-30.9696,30.2668,Southbroom">🏁 Southbroom</option><option value="-31.0497,30.2197,Port Edward">🏁 Port Edward</option><option value="-30.9875,29.9236,Bizana">🏁 Bizana / Mbizana</option><option value="-31.3678,29.5749,Lusikisiki">🏁 Lusikisiki</option><option value="-30.2718,30.7438,Durban">🏁 Durban</option></select><select id="p"><option value="1">1 Person</option><option value="2">2 People</option><option value="3">3 People</option><option value="4">4 People</option></select><div class="result" id="r"><div id="rt" style="font-size:14px"></div><div id="pr" style="font-size:28px;font-weight:bold;margin:6px 0"></div><div id="km" style="font-size:12px;opacity:.9"></div></div><button class="btn b1" onclick="calc()">🔍 CALCULATE DISTANCE & PRICE</button><button class="btn b2" id="pb" style="display:none" onclick="pay()">💳 PAY SECURE WITH PAYSTACK - R<span id="pa">0</span></button><button class="btn b3" onclick="wa()">💬 BOOK ON WHATSAPP</button></div><div class="sec"><h2>🚐 Where We Go</h2><p style="font-size:13px;color:#444;line-height:1.6">Port Shepstone ↔ Margate (14km) • Margate ↔ Port Edward (25km) • Port Shepstone ↔ Bizana (70km) • Port Shepstone ↔ Lusikisiki (110km) • Hibiscus Coast ↔ Durban (120km). Daily trips, morning & afternoon.</p></div><div class="sec"><h2>💙 Why Izandla Raag 2?</h2><p style="font-size:13px;color:#444;line-height:1.6">✅ Auto distance - no cheating, fair price<br>✅ Paystack secure payment<br>✅ WhatsApp instant confirmation<br>✅ Local drivers who know KZN roads<br>✅ Clean, safe vehicles<br>✅ We speak Zulu, Xhosa & English</p></div><div class="sec"><h2>📞 Contact</h2><p style="font-size:13px;color:#444">📍 Hibiscus Coast, KZN<br>📱 WhatsApp: Click green button<br>🌐 izandlaraag2.netlify.app<br>🕒 Open: 5AM - 8PM Daily</p></div></div><script>let D=0,F=0,A='',B='';function hav(a1,o1,a2,o2){const R=6371;const dLat=(a2-a1)*3.14159/180;const dLon=(o2-o1)*3.14159/180;const a=Math.sin(dLat/2)**2+Math.cos(a1*3.14/180)*Math.cos(a2*3.14/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}function calc(){const f=document.getElementById('f').value;const t=document.getElementById('t').value;if(!f||!t){alert('Please select Pickup and Drop towns');return;}const X=f.split(','),Y=t.split(',');A=X[2];B=Y[2];let km=hav(parseFloat(X[0]),parseFloat(X[1]),parseFloat(Y[0]),parseFloat(Y[1]))*1.35;D=km;let pax=parseInt(document.getElementById('p').value);F=Math.round((50+km*12)/10)*10*pax;document.getElementById('r').style.display='block';document.getElementById('rt').innerText=A+' → '+B;document.getElementById('pr').innerText='R'+F;document.getElementById('km').innerText=km.toFixed(1)+' km • R12/km + R50 base • '+pax+' pax';document.getElementById('pa').innerText=F;document.getElementById('pb').style.display='block';}function wa(){if(!F){alert('Calculate price first!');return;}const m=`Sawubona Izandla Raag 2! 🚐\n\nI want to book:\nFrom: ${A}\nTo: ${B}\nDistance: ${D.toFixed(1)} km\nPrice: R${F}\nPeople: ${document.getElementById('p').value}\n\nPlease confirm!`;window.open('https://wa.me/27700000000?text='+encodeURIComponent(m));}function pay(){const e=prompt('Your email for Paystack receipt:');if(!e)return;PaystackPop.setup({key:'pk_test_xxxxx',email:e,amount:F*100,currency:'ZAR',ref:''+Date.now(),callback:function(r){alert('Payment OK: '+r.reference);wa();}}).openIframe();}</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Izandla Raag 2 - LIVE MAPS</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial;background:#f5f7fb}
+header{background:#1a237e;color:#fff;padding:16px;text-align:center}
+.wrap{max-width:650px;margin:auto;padding:10px}
+.card{background:#fff;border-radius:18px;padding:14px;margin:10px 0;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+input{width:100%;padding:14px;border:2px solid #1a237e;border-radius:12px;margin:8px 0;font-size:15px}
+#map{width:100%;height:320px;border-radius:14px;border:2px solid #1a237e}
+.suggest{background:#fff;border:1px solid #ddd;border-radius:10px;max-height:150px;overflow:auto;display:none;position:relative;z-index:999}
+.suggest div{padding:10px;border-bottom:1px solid #eee;cursor:pointer;font-size:13px}
+.suggest div:hover{background:#eef2ff}
+.res{background:#1a237e;color:#fff;border-radius:14px;padding:14px;text-align:center;margin-top:10px;display:none}
+.btn{width:100%;padding:14px;border:0;border-radius:12px;font-weight:bold;color:#fff;margin-top:8px;font-size:15px}
+.b1{background:#1a237e}.b2{background:#000}.b3{background:#25D366}
+</style>
+</head>
+<body>
+<header>
+<h1>Izandla Raag 2 🚐 LIVE</h1>
+<p>🔴 LIVE Google-style Search • Real Map • Auto Distance</p>
+</header>
+
+<div class="wrap">
+<div class="card">
+<h3>📍 Pickup - Type ANY location (LIVE SEARCH)</h3>
+<input id="from" placeholder="Type: Port Shepstone, Gamalakhe, my house..." oninput="search(this,'fromSug')">
+<div id="fromSug" class="suggest"></div>
+
+<h3 style="margin-top:10px">🏁 Drop - Type ANY location</h3>
+<input id="to" placeholder="Type: Margate, Bizana, Durban..." oninput="search(this,'toSug')">
+<div id="toSug" class="suggest"></div>
+
+<div id="map"></div>
+
+<div class="res" id="res">
+<div id="rt" style="font-size:13px"></div>
+<div id="pr" style="font-size:30px;font-weight:bold;margin:6px 0"></div>
+<div id="km" style="font-size:12px"></div>
+</div>
+
+<button class="btn b1" onclick="calcLive()">🔍 CALCULATE LIVE DISTANCE</button>
+<button class="btn b2" id="payb" style="display:none">💳 PAY R<span id="pa">0</span></button>
+<button class="btn b3" onclick="wa()">💬 BOOK WHATSAPP NOW</button>
+<p style="font-size:10px;color:#666;text-align:center;margin-top:6px">Powered by OpenStreetMap LIVE - same as Google, FREE, no key</p>
+</div>
+</div>
+
+<script>
+let map=L.map('map').setView([-30.85,30.37],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+let m1,m2,line;
+let fromPos=null,toPos=null,FROM='',TO='',DIST=0,FARE=0;
+
+async function search(inp,boxId){
+ let q=inp.value; if(q.length<3){document.getElementById(boxId).style.display='none';return;}
+ let r=await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&countrycodes=za`);
+ let data=await r.json();
+ let box=document.getElementById(boxId); box.innerHTML=''; box.style.display='block';
+ data.forEach(p=>{
+  let d=document.createElement('div'); d.innerText=p.display_name;
+  d.onclick=()=>{
+   inp.value=p.display_name;
+   if(boxId=='fromSug'){fromPos=[parseFloat(p.lat),parseFloat(p.lon)]; FROM=p.display_name; if(m1)map.removeLayer(m1); m1=L.marker(fromPos).addTo(map).bindPopup('Pickup: '+p.display_name); map.setView(fromPos,12);}
+   else{toPos=[parseFloat(p.lat),parseFloat(p.lon)]; TO=p.display_name; if(m2)map.removeLayer(m2); m2=L.marker(toPos).addTo(map).bindPopup('Drop: '+p.display_name); map.setView(toPos,12);}
+   box.style.display='none'; if(fromPos&&toPos)drawLine();
+  };
+  box.appendChild(d);
+ });
+}
+function drawLine(){
+ if(line)map.removeLayer(line);
+ if(fromPos&&toPos){line=L.polyline([fromPos,toPos],{color:'#1a237e',weight:5}).addTo(map); map.fitBounds([fromPos,toPos],{padding:[30,30]});}
+}
+async function calcLive(){
+ if(!fromPos||!toPos){alert('Please search and select pickup & drop from LIVE suggestions');return;}
+ // Get real road distance via OSRM
+ let url=`https://router.project-osrm.org/route/v1/driving/${fromPos[1]},${fromPos[0]};${toPos[1]},${toPos[0]}?overview=full&geometries=geojson`;
+ try{
+  let r=await fetch(url); let j=await r.json();
+  let km=j.routes[0].distance/1000;
+  DIST=km; FARE=Math.round((50+km*12)/10)*10;
+  if(line)map.removeLayer(line);
+  line=L.geoJSON(j.routes[0].geometry,{style:{color:'#1a237e',weight:6}}).addTo(map);
+  map.fitBounds(line.getBounds(),{padding:[20,20]});
+  document.getElementById('res').style.display='block';
+  document.getElementById('rt').innerText=FROM.split(',')[0]+' → '+TO.split(',')[0];
+  document.getElementById('pr').innerText='R'+FARE;
+  document.getElementById('km').innerText=km.toFixed(1)+' km real road • Auto calculated';
+  document.getElementById('pa').innerText=FARE;
+  document.getElementById('payb').style.display='block';
+ }catch(e){
+  // fallback haversine
+  let R=6371; let dLat=(toPos[0]-fromPos[0])*Math.PI/180; let dLon=(toPos[1]-fromPos[1])*Math.PI/180;
+  let a=Math.sin(dLat/2)**2+Math.cos(fromPos[0]*Math.PI/180)*Math.cos(toPos[0]*Math.PI/180)*Math.sin(dLon/2)**2;
+  let km=R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))*1.3;
+  DIST=km; FARE=Math.round((50+km*12)/10)*10;
+  document.getElementById('res').style.display='block';
+  document.getElementById('rt').innerText=FROM.split(',')[0]+' → '+TO.split(',')[0];
+  document.getElementById('pr').innerText='R'+FARE;
+  document.getElementById('km').innerText=km.toFixed(1)+' km estimated';
+  document.getElementById('pa').innerText=FARE;
+  document.getElementById('payb').style.display='block';
+ }
+}
+function wa(){if(!FARE){alert('Calculate first');return;}let m=`Hi Izandla Raag 2 LIVE BOOKING!\nFrom: ${FROM}\nTo: ${TO}\nDist: ${DIST.toFixed(1)}km\nPrice: R${FARE}`;window.open('https://wa.me/27700000000?text='+encodeURIComponent(m));}
+</script>
+</body>
+</html>
