@@ -580,3 +580,14 @@ function stopAlarmSound(){
  try{let a=document.getElementById('alarmSound'); a.pause(); a.currentTime=0;}catch(e){}
  if(navigator.vibrate) navigator.vibrate(0);
 }
+document.addEventListener('click',function enableAudio(){
+ try{
+  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  if(audioCtx.state==='suspended') audioCtx.resume();
+  // Play silent to unlock
+  let o=audioCtx.createOscillator(); let g=audioCtx.createGain();
+  g.gain.value=0; o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime+0.1);
+  console.log('Audio unlocked!');
+ }catch(e){}
+},{once:true});
