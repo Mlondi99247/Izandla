@@ -592,3 +592,280 @@ document.addEventListener('click',function enableAudio(){
  }catch(e){}
 },{once:true});
 data:text/html,<button style="padding:30px;font-size:20px" onclick="let c=new AudioContext();setInterval(()=>{let o=c.createOscillator();let g=c.createGain();o.frequency.value=900;g.gain.value=1;o.connect(g);g.connect(c.destination);o.start();o.stop(c.currentTime+0.4);navigator.vibrate&&navigator.vibrate(1000)},1000);this.innerText='🔔 RINGING LOUD! THIS IS YOUR ORDER ALARM!'">TAP TO TEST ALARM - CLICK ME</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>IZANDLA ONE - South Africa's Super App</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#f6f7fb;color:#0f172a;overflow-x:hidden}
+:root{--orange:#FF6B00;--navy:#0A1931;--blue:#0B5FFF}
+.header{background:var(--navy);color:white;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:999}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:20px}
+.logo .icon{width:42px;height:42px;background:var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px}
+.badge{background:var(--orange);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.card{background:white;border-radius:18px;padding:14px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #eef0f5;cursor:pointer}
+.card h3{font-size:13px;font-weight:800}
+.card p{font-size:11px;color:var(--orange);font-weight:700;margin-top:2px}
+.section{background:white;margin:12px;border-radius:20px;padding:16px;box-shadow:0 4px 20px rgba(0,0,0,0.06);border:1px solid #eef0f5}
+.section-title{font-weight:900;font-size:16px;display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.dot{width:22px;height:22px;background:#ff0000;border-radius:50%;animation:pulse 1.5s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,0,0,0.7)}70%{box-shadow:0 0 0 10px rgba(255,0,0,0)}100%{box-shadow:0 0 0 0 rgba(255,0,0,0)}}
+.input{width:100%;padding:14px 16px;border:2px solid #e6e8ee;border-radius:14px;font-size:14px;font-weight:600;outline:none;background:#f9fafb;margin-bottom:10px}
+.input:focus{border-color:var(--orange);background:white}
+.suggest{background:white;border:1px solid #e6e8ee;border-radius:14px;max-height:160px;overflow-y:auto;display:none;position:absolute;z-index:50;width:calc(100% - 32px);box-shadow:0 10px 30px rgba(0,0,0,0.15)}
+.suggest div{padding:12px 14px;border-bottom:1px solid #f0f0f0;cursor:pointer;font-size:13px;font-weight:600}
+.suggest div:hover{background:#FFF3E6}
+#map{height:320px;border-radius:18px;border:3px solid var(--navy);margin:10px 0}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-weight:800;font-size:14px;cursor:pointer;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-blue{background:var(--blue);color:white}
+.btn-green{background:#0A7E07;color:white}
+.btn-orange{background:var(--orange);color:white}
+.btn-navy{background:var(--navy);color:white}
+.price-box{background:linear-gradient(135deg,#0A1931,#1a3a6b);color:white;padding:16px;border-radius:16px;margin:12px 0;display:none}
+.tab{padding:10px 16px;border-radius:20px;background:#eef0f5;font-weight:700;font-size:12px;white-space:nowrap;cursor:pointer;border:2px solid transparent}
+.tab.active{background:var(--navy);color:white;border-color:var(--orange)}
+.pay-box{background:#FFF7ED;border:2px solid var(--orange);border-radius:16px;padding:14px;margin:10px 0}
+.capitec{background:var(--navy);color:white;padding:12px;border-radius:12px;font-family:monospace;display:flex;justify-content:space-between;align-items:center;margin:8px 0}
+.driver-app,.doctor-app{display:none;background:#0f172a;color:white;padding:16px;border-radius:16px;margin-top:12px}
+.urgent{background:#FF0000;color:white;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:800;display:inline-block}
+.service-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo"><div class="icon">▲</div> IZANDLA ONE</div>
+  <div class="badge">SUPER APP • R20+R5/km • R5 FEE • NO COMMISSION</div>
+</div>
+<div class="grid">
+  <div class="card" onclick="scrollToSec('cleaning')"><div style="font-size:28px">🧹</div><h3>Cleaning Services</h3><p>From R450 • Deep Clean</p></div>
+  <div class="card" onclick="scrollToSec('rides')"><div style="font-size:28px">🚗</div><h3>Rides / Transport</h3><p>From R35 • 0-5km</p></div>
+  <div class="card" onclick="scrollToSec('petrol')"><div style="font-size:28px">⛽</div><h3>Petrol Delivery</h3><p>1L-10L • Pay First</p></div>
+  <div class="card" onclick="scrollToSec('spare')"><div style="font-size:28px">🛞</div><h3>Spare Wheel</h3><p>Nearest Company</p></div>
+  <div class="card" onclick="scrollToSec('driver')"><div style="font-size:28px">🚘</div><h3>Become a Driver</h3><p>Sign-up • Driver App</p></div>
+  <div class="card" onclick="scrollToSec('doctor')"><div style="font-size:28px">👨‍⚕️</div><h3>Become a Doctor</h3><p>Sign-up • Doctor App</p></div>
+  <div class="card"><div style="font-size:28px">🔥</div><h3>Gas Swap</h3><p>9kg • 19kg</p></div>
+  <div class="card"><div style="font-size:28px">🛒</div><h3>Grocery</h3><p>Shoprite • Pick n Pay</p></div>
+</div>
+<div class="section" id="rides">
+  <div class="section-title"><span class="dot"></span> LIVE MAP - Search Any Location</div>
+  <div style="position:relative">
+    <input id="fromInput" class="input" placeholder="📍 Pickup: Umlazi mega city mall" autocomplete="off">
+    <div id="fromSuggest" class="suggest"></div>
+  </div>
+  <div style="position:relative">
+    <input id="toInput" class="input" placeholder="📍 Drop-off: e.g., Durban Station" autocomplete="off">
+    <div id="toSuggest" class="suggest"></div>
+  </div>
+  <div id="map"></div>
+  <div id="priceBox" class="price-box">
+    <h4>✅ Live Distance Calculated</h4>
+    <div style="display:flex;justify-content:space-between;margin-top:10px">
+      <div><div style="opacity:0.7;font-size:11px">DISTANCE</div><div id="distText" style="font-weight:800;font-size:18px">0 km</div></div>
+      <div><div style="opacity:0.7;font-size:11px">PAYOUT DRIVER</div><div id="driverPayout" style="font-weight:800;font-size:18px;color:#4ADE80">R0</div></div>
+      <div><div style="opacity:0.7;font-size:11px">YOU PAY</div><div id="userPrice" style="font-weight:800;font-size:18px">R0</div></div>
+    </div>
+    <div style="font-size:11px;margin-top:8px;opacity:0.8">Base R20 + R5/km • R5 Izandla Fee • Driver gets 100% after fee • No Commission</div>
+  </div>
+  <button class="btn btn-blue" onclick="calculateDistance()">🔍 CALCULATE LIVE DISTANCE & PRICE</button>
+  <button class="btn btn-green" onclick="bookWhatsApp()">💬 BOOK WHATSAPP</button>
+  <button class="btn btn-orange" onclick="payNow()">💳 PAY NOW - Capitec 1648002305</button>
+  <div class="pay-box">
+    <strong>💳 Payments linked to Capitec:</strong> 1648002305
+    <div class="capitec"><span>Capitec • 1648002305 • Izandla One</span><button onclick="copyAcc()" style="background:#FF6B00;border:none;color:white;padding:6px 12px;border-radius:8px;font-weight:800">COPY</button></div>
+    <div style="font-size:11px">Use reference: Your Name + Service. Driver payout = Total - R5 fee.</div>
+  </div>
+</div>
+<div class="section" id="petrol">
+  <div class="section-title">⛽ Petrol Delivery - Pay First • Nearest Station</div>
+  <select id="petrolStation" class="input">
+    <option value="">Select Nearest Petrol Station</option>
+    <option>Engen Umlazi Mega City</option>
+    <option>Shell Umlazi V</option>
+    <option>BP Umlazi D</option>
+    <option>TotalEnergies Isipingo</option>
+    <option>Sasol Umlazi</option>
+  </select>
+  <select id="fuelType" class="input"><option>Petrol 93</option><option>Petrol 95</option><option>Diesel 50ppm</option><option>Diesel 10ppm</option></select>
+  <select id="fuelLitres" class="input"><option value="1">1 Litre - R22</option><option value="2">2 Litres - R44</option><option value="5">5 Litres - R110 + R35 delivery</option><option value="10">10 Litres - R220 + R50 delivery</option></select>
+  <input id="petrolLocation" class="input" placeholder="Your exact location + car reg">
+  <button class="btn btn-orange" onclick="orderPetrol()">💳 PAY FIRST & ORDER PETROL - Capitec 1648002305</button>
+</div>
+<div class="section" id="spare">
+  <div class="section-title">🛞 Spare Wheel & Tyre - Nearest Company</div>
+  <select id="wheelCompany" class="input">
+    <option value="">Select Nearest Wheels / Tyre Company</option>
+    <option>Tiger Wheel & Tyre - Umlazi Mega City</option>
+    <option>Supa Quick - Umlazi</option>
+    <option>Hi-Q - Isipingo</option>
+    <option>Dunlop Zone - Umlazi</option>
+    <option>Local Mobile Tyre Guy - Umlazi D</option>
+  </select>
+  <select id="wheelService" class="input"><option>Spare Wheel Hire - R150</option><option>Tyre Change + Jack - R100</option><option>Puncture Repair - R120</option><option>New Tyre + Fitment - Price on request</option></select>
+  <input id="wheelLocation" class="input" placeholder="Your location + tyre size e.g., 195/65R15">
+  <button class="btn btn-orange" onclick="orderWheel()">💳 PAY FIRST & ORDER - Capitec 1648002305</button>
+</div>
+<div class="section" id="cleaning">
+  <div class="section-title">🧹 Cleaning Services - Book WhatsApp OR Pay on App</div>
+  <div class="service-tabs"><div class="tab active" onclick="setClean('1-Bed From R450')">1-Bed R450</div><div class="tab" onclick="setClean('2-Bed From R650')">2-Bed R650</div><div class="tab" onclick="setClean('3-Bed From R850')">3-Bed R850</div><div class="tab" onclick="setClean('Jojo Tank R500')">Jojo Tank</div><div class="tab" onclick="setClean('Walls R350')">Walls R350</div><div class="tab" onclick="setClean('Floor R400')">Floor R400</div></div>
+  <input id="cleanType" class="input" value="1-Bedroom Deep Clean - From R450" readonly>
+  <input id="cleanAddress" class="input" placeholder="Address + date needed">
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <button class="btn btn-green" onclick="cleanWhatsApp()">💬 BOOK ON WHATSAPP</button>
+    <button class="btn btn-blue" onclick="cleanPay()">💳 PAY ON APP</button>
+  </div>
+  <div id="cleanAfter" style="display:none">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+      <button class="btn btn-orange" onclick="callNow()">📞 CALL NOW</button>
+      <button class="btn btn-navy" onclick="requestUrgent()"><span class="urgent">URGENT</span> Request Service</button>
+    </div>
+    <div style="font-size:11px;color:#0A7E07;font-weight:700;margin-top:6px">✅ Booked! Team will call you. If urgent click Request Service.</div>
+  </div>
+</div>
+<div class="section" id="driver">
+  <div class="section-title">🚘 Become a Driver - Sign-up → Approved → Driver App</div>
+  <input id="dName" class="input" placeholder="Full Name">
+  <input id="dPhone" class="input" placeholder="Phone / WhatsApp">
+  <input id="dCar" class="input" placeholder="Car - e.g., Silver Hyundai Grand i10 DL16XXZN">
+  <input id="dLic" class="input" placeholder="License + PrDP">
+  <button class="btn btn-navy" onclick="driverSignup()">📝 SUBMIT DRIVER APPLICATION</button>
+  <div id="driverApp" class="driver-app">
+    <h3>✅ Approved! Welcome Driver App</h3>
+    <div style="margin-top:10px;background:#1e293b;padding:12px;border-radius:12px">
+      <div>🔔 New Ride Request! Umlazi Mega City → MUT - R75</div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" style="margin:0">ACCEPT</button><button class="btn" style="background:#333;color:white;margin:0">DECLINE</button></div>
+      <div style="margin-top:10px;font-size:12px">Payout: R70 (R75 - R5 Izandla fee) → Capitec 1648002305 will transfer to you.</div>
+    </div>
+    <button class="btn btn-orange" onclick="driverOnline()" style="margin-top:12px">🟢 GO ONLINE - Start Receiving Rides</button>
+  </div>
+</div>
+<div class="section" id="doctor">
+  <div class="section-title">👨‍⚕️ Become a Doctor - Sign-up → Doctor App for Patients</div>
+  <input id="docName" class="input" placeholder="Full Name - Dr.">
+  <input id="docPhone" class="input" placeholder="Phone / WhatsApp">
+  <input id="docSpec" class="input" placeholder="Speciality - GP, Dentist, Physio">
+  <input id="docHPCSA" class="input" placeholder="HPCSA Number">
+  <button class="btn btn-navy" onclick="doctorSignup()">📝 SUBMIT DOCTOR APPLICATION</button>
+  <div id="doctorApp" class="doctor-app">
+    <h3>✅ Approved! Doctor App - Patients Calling for Help</h3>
+    <div style="background:#1e293b;padding:12px;border-radius:12px;margin-top:10px">
+      <div>🚨 Patient Call: Thandi in Umlazi D - Needs Home Visit - From R450</div>
+      <div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" style="margin:0">ACCEPT CALL</button><button class="btn btn-blue" style="margin:0">📞 CALL PATIENT</button></div>
+    </div>
+    <div style="margin-top:10px;font-size:12px">Payout per visit: R450 - R5 fee = R445 to you via Capitec 1648002305.</div>
+  </div>
+</div>
+<script>
+let map, fromMarker, toMarker, fromPos=null, toPos=null, line=null, lastDist=0, lastPrice=0;
+function initMap(){ map = L.map('map').setView([-29.966,30.92], 11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
+function searchLocation(q, target){
+  if(q.length<3) return;
+  fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&countrycodes=za&limit=5`)
+  .then(r=>r.json()).then(data=>{
+    const box = target==='from'?document.getElementById('fromSuggest'):document.getElementById('toSuggest');
+    box.innerHTML=''; box.style.display=data.length?'block':'none';
+    data.forEach(d=>{
+      const div=document.createElement('div'); div.textContent=d.display_name;
+      div.onclick=()=>{
+        const lat=parseFloat(d.lat), lon=parseFloat(d.lon);
+        if(target==='from'){fromPos=[lat,lon]; document.getElementById('fromInput').value=d.display_name;
+          if(fromMarker) map.removeLayer(fromMarker); fromMarker=L.marker([lat,lon]).addTo(map).bindPopup('Pickup');
+        }else{toPos=[lat,lon]; document.getElementById('toInput').value=d.display_name;
+          if(toMarker) map.removeLayer(toMarker); toMarker=L.marker([lat,lon]).addTo(map).bindPopup('Drop-off');
+        }
+        map.setView([lat,lon],13); box.style.display='none';
+      };
+      box.appendChild(div);
+    });
+  });
+}
+document.getElementById('fromInput').addEventListener('input', e=>searchLocation(e.target.value,'from'));
+document.getElementById('toInput').addEventListener('input', e=>searchLocation(e.target.value,'to'));
+function haversine(a,b){
+  const R=6371, dLat=(b[0]-a[0])*Math.PI/180, dLon=(b[1]-a[1])*Math.PI/180;
+  const la1=a[0]*Math.PI/180, la2=b[0]*Math.PI/180;
+  const x=Math.sin(dLat/2)**2+la1*la2*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));
+}
+function calculateDistance(){
+  if(!fromPos || !toPos){ alert('📍 Please search & select BOTH pickup and drop-off from the dropdown list (click a suggestion). Then map will show markers.'); return; }
+  const d=haversine(fromPos,toPos); lastDist=d;
+  const base=20, perKm=5, izandlaFee=5; const price = base + d*perKm; lastPrice=price;
+  const driverPayout = price - izandlaFee;
+  document.getElementById('distText').textContent=d.toFixed(1)+' km';
+  document.getElementById('userPrice').textContent='R'+Math.round(price);
+  document.getElementById('driverPayout').textContent='R'+Math.round(driverPayout);
+  document.getElementById('priceBox').style.display='block';
+  if(line) map.removeLayer(line); line=L.polyline([fromPos,toPos],{color:'#FF6B00',weight:5}).addTo(map);
+  map.fitBounds([fromPos,toPos],{padding:[30,30]});
+  document.getElementById('priceBox').scrollIntoView({behavior:'smooth'});
+}
+function bookWhatsApp(){
+  if(lastDist===0){ alert('Calculate first - Search select locations, then click CALCULATE LIVE DISTANCE & PRICE'); return; }
+  const msg=`Hi Izandla One! Ride: ${document.getElementById('fromInput').value} to ${document.getElementById('toInput').value}. Distance ${lastDist.toFixed(1)}km Price R${Math.round(lastPrice)} (Driver gets R${Math.round(lastPrice-5)} after R5 Izandla fee). Capitec 1648002305`;
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function payNow(){
+  if(lastDist===0){ alert('Calculate first'); return; }
+  alert(`💳 Pay R${Math.round(lastPrice)} to Capitec 1648002305 - Ref: ${document.getElementById('fromInput').value.slice(0,20)}. After payment driver will be dispatched. Driver payout R${Math.round(lastPrice-5)} (R5 fee to Izandla, no commission).`);
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent('Paid R'+Math.round(lastPrice)+' for ride to Capitec 1648002305 - '+document.getElementById('fromInput').value+' to '+document.getElementById('toInput').value)}`,'_blank');
+}
+function copyAcc(){navigator.clipboard.writeText('1648002305'); alert('✅ Capitec 1648002305 copied');}
+function scrollToSec(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function setClean(v){document.getElementById('cleanType').value=v; document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); event.target.classList.add('active');}
+function cleanWhatsApp(){
+  const t=document.getElementById('cleanType').value, a=document.getElementById('cleanAddress').value;
+  if(!a){alert('Enter address + date'); return;}
+  const msg=`Hi Izandla Cleaning! Book ${t} at ${a}. Option: WhatsApp booking.`;
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent(msg)}`,'_blank');
+  document.getElementById('cleanAfter').style.display='block';
+}
+function cleanPay(){
+  const t=document.getElementById('cleanType').value, a=document.getElementById('cleanAddress').value;
+  if(!a){alert('Enter address'); return;}
+  alert(`💳 Pay for ${t} to Capitec 1648002305. After payment click CALL NOW. Address: ${a}`);
+  document.getElementById('cleanAfter').style.display='block';
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent('Paid for '+t+' - '+a+' to Capitec 1648002305')}`,'_blank');
+}
+function callNow(){window.location.href='tel:0795100296';}
+function requestUrgent(){alert('🚨 Urgent request sent! Team will call in 2 mins. 0795100296'); window.open(`https://wa.me/27795100296?text=${encodeURIComponent('URGENT CLEANING NEEDED ASAP - '+document.getElementById('cleanAddress').value)}`,'_blank');}
+function orderPetrol(){
+  const st=document.getElementById('petrolStation').value, ft=document.getElementById('fuelType').value, l=document.getElementById('fuelLitres').value, loc=document.getElementById('petrolLocation').value;
+  if(!st||!loc){alert('Select nearest petrol station + your location'); return;}
+  const msg=`PETROL ORDER - Station: ${st} - ${ft} ${l}L - Location: ${loc} - PAY FIRST to Capitec 1648002305`;
+  alert(`💳 Pay first to Capitec 1648002305 for ${l}L ${ft} from ${st}. Driver will buy & deliver.`);
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function orderWheel(){
+  const c=document.getElementById('wheelCompany').value, s=document.getElementById('wheelService').value, l=document.getElementById('wheelLocation').value;
+  if(!c||!l){alert('Select nearest wheels company + location'); return;}
+  const msg=`SPARE WHEEL ORDER - Company: ${c} - Service: ${s} - Location: ${l} - PAY FIRST Capitec 1648002305`;
+  alert(`💳 Pay first to Capitec 1648002305 for ${s} at ${c}`);
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent(msg)}`,'_blank');
+}
+function driverSignup(){
+  const n=document.getElementById('dName').value, p=document.getElementById('dPhone').value;
+  if(!n||!p){alert('Enter name & phone'); return;}
+  alert('✅ Driver application submitted! After approval you will be directed to Driver App.');
+  document.getElementById('driverApp').style.display='block';
+  document.getElementById('driverApp').scrollIntoView({behavior:'smooth'});
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent('NEW DRIVER SIGNUP: '+n+' '+p+' Car: '+document.getElementById('dCar').value)}`,'_blank');
+}
+function driverOnline(){alert('🟢 You are ONLINE! You will receive ride requests. Payouts to you via Capitec 1648002305 minus R5 fee.');}
+function doctorSignup(){
+  const n=document.getElementById('docName').value, p=document.getElementById('docPhone').value;
+  if(!n||!p){alert('Enter name & phone'); return;}
+  alert('✅ Doctor application submitted! After approval you will see patients calling for help in Doctor App.');
+  document.getElementById('doctorApp').style.display='block';
+  document.getElementById('doctorApp').scrollIntoView({behavior:'smooth'});
+  window.open(`https://wa.me/27795100296?text=${encodeURIComponent('NEW DOCTOR SIGNUP: '+n+' '+p+' Spec: '+document.getElementById('docSpec').value)}`,'_blank');
+}
+window.onload=initMap;
+</script>
+</body>
+   </html>
