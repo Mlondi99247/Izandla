@@ -869,3 +869,114 @@ window.onload=initMap;
 </script>
 </body>
    </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IZANDLA ONE - Super App</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Inter,sans-serif}
+body{background:#f1f3f8}
+.header{background:#0A1931;color:white;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:1000}
+.logo{font-weight:900;font-size:20px;display:flex;align-items:center;gap:8px}
+.badge{background:#FF6B00;padding:6px 12px;border-radius:20px;font-size:11px;font-weight:900}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:14px}
+.card{background:white;border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06);cursor:pointer;border:1px solid #eef0f5}
+.section{background:white;margin:12px;border-radius:20px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06);border:1px solid #eef0f5}
+.input{width:100%;padding:14px 16px;border:2px solid #e5e7eb;border-radius:14px;margin-bottom:10px;font-weight:700;background:#f9fafb;outline:none}
+.btn{width:100%;padding:16px;border:none;border-radius:14px;font-weight:900;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-blue{background:#0B5FFF;color:white}.btn-green{background:#0A7E07;color:white}.btn-orange{background:#FF6B00;color:white}.btn-navy{background:#0A1931;color:white}.btn-red{background:#FF0000;color:white}
+#map{height:320px;border-radius:18px;border:3px solid #0A1931;margin:10px 0}
+.price-box{background:linear-gradient(135deg,#0A1931,#1a3a6b);color:white;padding:16px;border-radius:16px;display:none;margin:12px 0}
+.suggest{background:white;border:1px solid #ddd;border-radius:12px;max-height:160px;overflow:auto;display:none;position:absolute;z-index:99;width:calc(100% - 32px);box-shadow:0 10px 20px rgba(0,0,0,.15)}
+.suggest div{padding:12px;border-bottom:1px solid #f0f0f0;font-weight:600;cursor:pointer}
+.pay-box{background:#FFF7ED;border:2px solid #FF6B00;border-radius:14px;padding:12px;margin:10px 0}
+.capitec{background:#0A1931;color:white;padding:12px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;margin:8px 0;font-family:monospace}
+.driver-app,.doctor-app{display:none;background:#0f172a;color:white;padding:16px;border-radius:16px;margin-top:12px}
+.alarm-banner{background:#FF0000;color:white;padding:12px;border-radius:12px;display:none;animation:pulse 1s infinite;text-align:center;font-weight:900;margin:10px 0}
+@keyframes pulse{0%{opacity:1}50%{opacity:0.6}100%{opacity:1}}
+</style>
+</head>
+<body>
+<div class="header">
+<div class="logo"><div style="width:36px;height:36px;background:#FF6B00;border-radius:50%;display:flex;align-items:center;justify-content:center">▲</div> IZANDLA ONE</div>
+<div class="badge">SUPER APP • R20+R5/km • R5 FEE • NO COMMISSION • 1648002305</div>
+</div>
+
+<div id="alarmBanner" class="alarm-banner">
+🔔🔔 NEW ORDER COMING! 🔔🔔<br>
+<button onclick="stopAlarmSound()" style="background:white;color:red;border:none;padding:10px 20px;border-radius:20px;font-weight:900;margin-top:8px">🔇 STOP ALARM - ORDER RECEIVED</button>
+</div>
+
+<div class="grid">
+<div class="card" onclick="go('clean')"><div style="font-size:30px">🧹</div><b>Cleaning</b><div style="color:#FF6B00;font-size:12px;font-weight:800">From R450</div></div>
+<div class="card" onclick="go('rides')"><div style="font-size:30px">🚗</div><b>Rides</b><div style="color:#FF6B00;font-size:12px;font-weight:800">From R35</div></div>
+<div class="card" onclick="go('petrol')"><div style="font-size:30px">⛽</div><b>Petrol Delivery</b><div style="color:#FF6B00;font-size:12px;font-weight:800">Pay First Nearest</div></div>
+<div class="card" onclick="go('spare')"><div style="font-size:30px">🛞</div><b>Spare Wheel</b><div style="color:#FF6B00;font-size:12px;font-weight:800">Nearest Company</div></div>
+<div class="card" onclick="go('driver')"><div style="font-size:30px">🚘</div><b>Become Driver</b><div style="color:#FF6B00;font-size:12px;font-weight:800">Driver App + Alarm</div></div>
+<div class="card" onclick="go('doctor')"><div style="font-size:30px">👨‍⚕️</div><b>Become Doctor</b><div style="color:#FF6B00;font-size:12px;font-weight:800">Doctor App + Alarm</div></div>
+<div class="card" onclick="go('gas')"><div style="font-size:30px">🔥</div><b>Gas Swap</b><div style="color:#FF6B00;font-size:12px;font-weight:800">9kg 19kg</div></div>
+<div class="card" onclick="adminLogin()"><div style="font-size:30px">🔐</div><b>Admin Only</b><div style="color:#FF0000;font-size:12px;font-weight:800">Owner 0795100296</div></div>
+</div>
+
+<div class="section" id="rides">
+<h3>📍 LIVE MAP - Rides R20 + R5/km (Original)</h3>
+<div style="position:relative;margin-top:10px"><input id="fromInput" class="input" placeholder="📍 Pickup: Umlazi mega city mall"><div id="fromSuggest" class="suggest"></div></div>
+<div style="position:relative"><input id="toInput" class="input" placeholder="📍 Drop-off: Durban Station"><div id="toSuggest" class="suggest"></div></div>
+<div id="map"></div>
+<div id="priceBox" class="price-box"><div style="display:flex;justify-content:space-between;text-align:center"><div><small>DISTANCE</small><br><b id="distText">0km</b></div><div><small>DRIVER GETS</small><br><b id="driverPayout" style="color:#4ADE80">R0</b></div><div><small>YOU PAY</small><br><b id="userPrice">R0</b></div></div><div style="font-size:11px;margin-top:8px">Base R20 + R5/km • R5 fee • No commission • 1648002305</div></div>
+<button class="btn btn-blue" onclick="calc()">🔍 CALCULATE LIVE DISTANCE & PRICE</button>
+<button class="btn btn-green" onclick="book()">💬 BOOK WHATSAPP 0795100296</button>
+<button class="btn btn-orange" onclick="pay()">💳 PAY NOW - Capitec 1648002305</button>
+<div class="pay-box"><b>💳 Capitec: 1648002305</b><div class="capitec"><span>Capitec 1648002305</span><button onclick="copyAcc()" style="background:#FF6B00;border:none;color:white;padding:8px 12px;border-radius:8px;font-weight:900">COPY</button></div><div style="font-size:11px">Driver gets Total - R5 fee • WhatsApp 0795100296</div></div>
+</div>
+
+<div class="section" id="petrol"><h3>⛽ Petrol - Pay First - Nearest Station (Added)</h3><select id="pStation" class="input"><option value="">Select Nearest Petrol Station</option><option>Engen Umlazi Mega City - Closest</option><option>Shell Umlazi V</option><option>BP Umlazi D</option><option>TotalEnergies Isipingo</option></select><select class="input"><option>Petrol 93</option><option>Petrol 95</option><option>Diesel</option></select><select id="pLitres" class="input"><option value="1">1L R22</option><option value="2">2L R44</option><option value="5">5L R110 + R35 delivery</option><option value="10">10L R220 + R50 delivery</option></select><input id="pLoc" class="input" placeholder="Your location + car reg"><button class="btn btn-orange" onclick="orderP()">💳 PAY FIRST & ORDER - 1648002305 + ALARM</button></div>
+
+<div class="section" id="spare"><h3>🛞 Spare Wheel - Nearest Company (Added)</h3><select id="wComp" class="input"><option value="">Select Nearest Tyre Company</option><option>Tiger Wheel & Tyre Umlazi Mega City</option><option>Supa Quick Umlazi</option><option>Hi-Q Isipingo</option></select><select class="input"><option>Spare Wheel Hire R150</option><option>Tyre Change R100</option><option>Puncture R120</option></select><input id="wLoc" class="input" placeholder="Location + tyre size"><button class="btn btn-orange" onclick="orderW()">💳 PAY FIRST & ORDER - 1648002305 + ALARM</button></div>
+
+<div class="section" id="clean"><h3>🧹 Cleaning - Original Workflow</h3><input id="cType" class="input" value="1-Bed Deep Clean From R450"><input id="cAddr" class="input" placeholder="Address + date"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn btn-green" onclick="cleanW()">💬 BOOK WHATSAPP</button><button class="btn btn-blue" onclick="cleanP()">💳 PAY ON APP 1648002305</button></div><div id="cAfter" style="display:none;margin-top:10px"><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px"><button class="btn btn-orange" onclick="window.location.href='tel:0795100296'">📞 CALL NOW</button><button class="btn btn-red" onclick="urgent()">🚨 URGENT + ALARM</button></div><p style="color:green;font-weight:800">✅ Booked! Alarm to cleaners!</p></div></div>
+
+<div class="section" id="gas"><h3>🔥 Gas Swap - Pay First 1648002305</h3><select class="input"><option>9kg Swap R350</option><option>19kg Swap R650</option></select><input id="gasAddr" class="input" placeholder="Address"><button class="btn btn-orange" onclick="orderGas()">💳 PAY FIRST + ALARM TO DRIVER</button></div>
+
+<div class="section" id="driver"><h3>🚘 Become Driver - Driver App + ALARM</h3><input id="dName" class="input" placeholder="Full Name"><input id="dPhone" class="input" placeholder="Phone WhatsApp"><input id="dCar" class="input" placeholder="Car"><button class="btn btn-navy" onclick="dSignup()">📝 SUBMIT APPLICATION</button><div id="dApp" class="driver-app"><b>✅ Approved! Driver App - ALARM ON</b><br><br><div style="background:#1e293b;padding:12px;border-radius:12px"><div>🔔 New Ride! Umlazi → MUT R75 ALARM!</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" style="margin:0" onclick="stopAlarmSound();alert('Accepted! Payout R70 via 1648002305')">✅ ACCEPT + STOP ALARM</button><button class="btn" style="background:#333;color:white;margin:0" onclick="stopAlarmSound()">DECLINE + STOP</button></div><div style="font-size:12px;margin-top:8px">Payout R70 via Capitec 1648002305</div></div><button class="btn btn-orange" style="margin-top:12px" onclick="startAlarm();alert('🟢 ONLINE - Alarm ON')">🟢 GO ONLINE ALARM ON</button><button class="btn btn-red" onclick="stopAlarmSound()">🔇 STOP ALARM TEST</button></div></div>
+
+<div class="section" id="doctor"><h3>👨‍⚕️ Become Doctor - Doctor App + ALARM</h3><input id="docName" class="input" placeholder="Dr Name"><input id="docPhone" class="input" placeholder="Phone"><input id="docSpec" class="input" placeholder="Speciality"><button class="btn btn-navy" onclick="docSignup()">📝 SUBMIT</button><div id="docApp" class="doctor-app"><b>✅ Approved! Doctor App ALARM</b><br><br><div style="background:#1e293b;padding:12px;border-radius:12px"><div>🚨 Patient Thandi Umlazi D R450 ALARM!</div><div style="display:flex;gap:8px;margin-top:8px"><button class="btn btn-green" style="margin:0" onclick="stopAlarmSound();alert('Accepted R445 via 1648002305')">✅ ACCEPT + STOP</button><button class="btn btn-blue" style="margin:0" onclick="window.location.href='tel:0795100296'">📞 CALL</button></div></div><button class="btn btn-red" style="margin-top:10px" onclick="stopAlarmSound()">🔇 STOP ALARM</button></div></div>
+
+<div class="section" id="adminSection" style="display:none"><h3>🔐 ADMIN ONLY YOU 0795100296 - All Alarms + Money 1648002305</h3><div style="background:#0A1931;color:white;padding:14px;border-radius:12px"><div>💰 Today: <b id="adminMoney" style="color:#4ADE80">R0</b> → 1648002305</div><div style="margin-top:8px">📦 Orders: <span id="adminOrders">0</span></div><div style="margin-top:12px;display:grid;grid-template-columns:1fr 1fr;gap:8px"><button class="btn btn-green" style="margin:0" onclick="startAlarm()">🔔 TEST ALARM</button><button class="btn btn-red" style="margin:0" onclick="stopAlarmSound()">🔇 STOP ALL</button></div><button class="btn btn-orange" style="margin-top:8px" onclick="window.open('https://wa.me/27795100296?text=Payouts 1648002305','_blank')">💸 PAYOUTS FROM 1648002305</button></div><div style="margin-top:10px;background:#FFF7ED;border:2px solid #FF6B00;padding:12px;border-radius:12px"><b>Live Feed (Alarm each order):</b><div id="adminFeed" style="font-size:12px;margin-top:6px">No orders - alarm rings to 0795100296 when order comes</div></div></div>
+
+<audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+
+<script>
+let map,fromPos=null,toPos=null,fromMarker,toMarker,line=null,lastDist=0,lastPrice=0;
+let audioCtx=null,alarmInterval=null;
+function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function init(){map=L.map('map').setView([-29.966,30.92],11);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map)}
+function search(q,t){if(q.length<3)return;fetch('https://nominatim.openstreetmap.org/search?format=json&q='+encodeURIComponent(q)+'&countrycodes=za&limit=5').then(r=>r.json()).then(d=>{let b=t==='from'?fromSuggest:toSuggest;b.innerHTML='';b.style.display=d.length?'block':'none';d.forEach(e=>{let div=document.createElement('div');div.textContent=e.display_name;div.onclick=()=>{let lat=parseFloat(e.lat),lon=parseFloat(e.lon);if(t==='from'){fromPos=[lat,lon];fromInput.value=e.display_name;if(fromMarker)map.removeLayer(fromMarker);fromMarker=L.marker([lat,lon]).addTo(map)}else{toPos=[lat,lon];toInput.value=e.display_name;if(toMarker)map.removeLayer(toMarker);toMarker=L.marker([lat,lon]).addTo(map)}map.setView([lat,lon],13);b.style.display='none'};b.appendChild(div)})})}
+fromInput.addEventListener('input',e=>search(e.target.value,'from'));
+toInput.addEventListener('input',e=>search(e.target.value,'to'));
+function hav(a,b){let R=6371,dLa=(b[0]-a[0])*Math.PI/180,dLo=(b[1]-a[1])*Math.PI/180,la1=a[0]*Math.PI/180,la2=b[0]*Math.PI/180,x=Math.sin(dLa/2)**2+Math.cos(la1)*Math.cos(la2)*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function calc(){if(!fromPos||!toPos){alert('Type and CLICK suggestion for both');return}let d=hav(fromPos,toPos);lastDist=d;let p=20+d*5;lastPrice=p;distText.textContent=d.toFixed(1)+'km';userPrice.textContent='R'+Math.round(p);driverPayout.textContent='R'+Math.round(p-5);priceBox.style.display='block';if(line)map.removeLayer(line);line=L.polyline([fromPos,toPos],{color:'#FF6B00',weight:6}).addTo(map);map.fitBounds([fromPos,toPos],{padding:[30,30]})}
+function book(){if(!lastDist){alert('Calculate first');return}startAlarm();let m=`Ride ${fromInput.value} to ${toInput.value} ${lastDist.toFixed(1)}km R${Math.round(lastPrice)}`;window.open('https://wa.me/27795100296?text='+encodeURIComponent(m));addFeed('Ride R'+Math.round(lastPrice))}
+function pay(){if(!lastDist){alert('Calculate first');return}startAlarm();alert('Pay R'+Math.round(lastPrice)+' to Capitec 1648002305');window.open('https://wa.me/27795100296?text=Paid R'+Math.round(lastPrice)+' 1648002305');addFeed('Paid Ride R'+Math.round(lastPrice))}
+function copyAcc(){navigator.clipboard.writeText('1648002305');alert('Copied 1648002305')}
+function orderP(){if(!pLoc.value){alert('Enter location');return}startAlarm();window.open('https://wa.me/27795100296?text='+encodeURIComponent('PETROL '+pStation.value+' '+pLoc.value+' 1648002305'));alert('Pay first 1648002305 Alarm to driver');addFeed('Petrol '+pLitres.value)}
+function orderW(){if(!wLoc.value){alert('Enter location');return}startAlarm();window.open('https://wa.me/27795100296?text='+encodeURIComponent('WHEEL '+wComp.value+' '+wLoc.value+' 1648002305'));addFeed('Wheel')}
+function orderGas(){let a=gasAddr.value;if(!a){alert('Enter address');return}startAlarm();window.open('https://wa.me/27795100296?text='+encodeURIComponent('GAS '+a+' 1648002305'));addFeed('Gas')}
+function cleanW(){if(!cAddr.value){alert('Enter address');return}startAlarm();window.open('https://wa.me/27795100296?text='+encodeURIComponent('Cleaning '+cType.value+' '+cAddr.value));cAfter.style.display='block';addFeed('Cleaning')}
+function cleanP(){if(!cAddr.value){alert('Enter address');return}startAlarm();alert('Pay to 1648002305 for '+cType.value);window.open('https://wa.me/27795100296?text='+encodeURIComponent('Paid Cleaning '+cType.value+' '+cAddr.value+' 1648002305'));cAfter.style.display='block';addFeed('Cleaning Paid')}
+function urgent(){startAlarm();window.open('https://wa.me/27795100296?text=URGENT '+cAddr.value);alert('Urgent alarm sent 0795100296')}
+function dSignup(){if(!dName.value||!dPhone.value){alert('Name phone');return}alert('Driver submitted Approved Driver App Alarm via 1648002305');dApp.style.display='block';dApp.scrollIntoView({behavior:'smooth'});window.open('https://wa.me/27795100296?text=NEW DRIVER '+dName.value+' '+dPhone.value)}
+function docSignup(){if(!docName.value||!docPhone.value){alert('Name phone');return}docApp.style.display='block';docApp.scrollIntoView({behavior:'smooth'});window.open('https://wa.me/27795100296?text=NEW DOCTOR '+docName.value);alert('Doctor signup to 0795100296 Alarm on')}
+function adminLogin(){let pin=prompt('ADMIN ONLY PIN (only you 0795100296):');if(pin==='0795'||pin==='296'||pin==='1648002305'){adminSection.style.display='block';adminSection.scrollIntoView({behavior:'smooth'});alert('Welcome Admin Money to 1648002305');startAlarm()}else if(pin){alert('Wrong PIN Only owner 0795100296')}}
+function addFeed(txt){let f=adminFeed;let now=new Date().toLocaleTimeString();f.innerHTML='<div>['+now+'] '+txt+' → 1648002305 0795100296</div>'+f.innerHTML;let m=adminMoney;let cur=parseInt(m.textContent.replace(/[^0-9]/g,'')||0);m.textContent='R'+(cur+50);adminOrders.textContent=parseInt(adminOrders.textContent)+1}
+function startAlarm(){try{document.getElementById('alarmBanner').style.display='block';if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended') audioCtx.resume();function beep(){try{let o=audioCtx.createOscillator();let g=audioCtx.createGain();o.type='square';o.frequency.value=900;g.gain.value=0.8;o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.4);setTimeout(()=>{let o2=audioCtx.createOscillator();let g2=audioCtx.createGain();o2.type='square';o2.frequency.value=1200;g2.gain.value=0.8;o2.connect(g2);g2.connect(audioCtx.destination);o2.start();o2.stop(audioCtx.currentTime+0.4)},500)}catch(e){}}beep();if(alarmInterval) clearInterval(alarmInterval);alarmInterval=setInterval(beep,1200);if(navigator.vibrate) navigator.vibrate([1000,300,1000,300,1000]);let a=alarmSound;a.volume=1;a.play().catch(()=>{});}catch(e){alert('🔔 NEW ORDER!')}}
+function stopAlarmSound(){if(alarmInterval) clearInterval(alarmInterval);alarmInterval=null;try{alarmSound.pause();alarmSound.currentTime=0;}catch(e){}if(navigator.vibrate) navigator.vibrate(0);alarmBanner.style.display='none';}
+document.addEventListener('click',function(){try{if(!audioCtx) audioCtx=new(window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended') audioCtx.resume();}catch(e){}},{once:true});
+window.onload=init;
+</script>
+</body>
+</html>
